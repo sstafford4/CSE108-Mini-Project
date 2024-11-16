@@ -5,8 +5,20 @@
     </head>
     <body>
         <div>
-            <!-- Use the URL for the index route -->
             <a href="{{ url_for('index') }}" class="back-to-login">Log Out</a>
+        </div>
+
+        <h1>Add Courses</h1>
+        <div>
+            <form action="/add_course" method="post">
+                <input name="course_name" type="text" placeholder="Enter Course Name" required>
+                <input name="course_number" type="text" placeholder="Enter Course Number" required>
+
+                <input name="professor" type="text" placeholder="Enter Professor" required>
+                <input name="capacity" type="text" placeholder="Enter Course Capacity" required>
+
+                <button type="submit">Add Course</button>
+            </form>
         </div>
     </body>
 </html>

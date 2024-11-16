@@ -96,6 +96,10 @@ def index():
 def create_acc_page():
     return render_template('create_acc.html')
 
+@app.route('/all_courses')
+def all_courses():
+    return render_template('allCourses.html')
+
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -146,6 +150,26 @@ def create_account():
     flash("Account created successfully! Please log in.", "success")
     return redirect(url_for('index'))
 
+@app.route('/add_course', methods=['GET', 'POST'])
+def add_course():
+    course_name = request.form.get('course_name')
+    course_number = request.form.get('course_number')
+    professor = request.form.get('professor')
+    capacity = request.form.get('capacity')
+
+    existing_course = Course.query.filter_by(course_name=course_name).first()
+    if existing_course:
+        flash("Course already exists under this name", "error")
+        return redirect(url_for('adminview'))
+
+    new_course = Course(course_name=course_name, course_number=course_number,professor=professor, capacity=capacity, enrolled_students=0)
+    db.session.add(new_course)
+    db.session.commit()
+
+    flash("Course added successfully!", "success")
+    return render_template('adminview.html')
+
+
 # Add dummy routes for student, teacher, and admin views
 @app.route('/student/<username>')
 def studentview(username):
@@ -167,6 +191,32 @@ def adminview(username):
     if 'user_id' not in session:
         return redirect(url_for('index'))  # Redirect to login if not logged in
     return render_template('adminview.html')
+
+# @app.route('/all_courses', methods=['GET', 'POST'])
+# def get_all_courses():
+#     if 'user_id' not in session:
+#         return redirect(url_for('index'))
+#
+#     all_courses_list = Course.query.all()
+#     courses = [
+#         {"course_name": course.course_name,
+#          "course_number" : course.course_number,
+#          "professor" : course.professor,
+#          "capacity" : course.capacity,
+#          "enrolled_students" : course.enrolled_students
+#          } for course in all_courses_list
+#     ]
+#
+#     return jsonify(courses)
+
+@app.route('/get_all_courses', methods=['GET'])
+def get_all_courses():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    all_courses_list = Course.query.all()
+    return render_template('allCourses.html', courses=all_courses_list)
+
 
 @app.route("/logout")
 def logout():
