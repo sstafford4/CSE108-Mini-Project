@@ -7,11 +7,16 @@
     </head>
     <body>
         <div>
-            <!-- Use the URL for the index route -->
+            <h1> Hello, {{ person_name }} </h1>
+        </div>
+        <div>
             <a href="{{ url_for('index') }}" class="back-to-login">Log Out</a>
         </div>
         <div>
             <a href="{{ url_for('get_all_courses') }}" class="all-courses">View All Courses</a>
+        </div>
+        <div>
+            <a href="{{ url_for('student_courses') }}" class="student-courses">View Your Courses</a>
         </div>
     </body>
 </html>

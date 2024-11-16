@@ -51,7 +51,7 @@ class Student(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     student_name = db.Column(db.String(80), nullable=False)
-    grade = db.Column(db.String(5), nullable=True)  # Optional, e.g., "A", "B+", etc.
+    grade = db.Column(db.Integer, nullable=True)  # Optional, e.g., "A", "B+", etc.
     enrollment_id = db.Column(db.Integer, db.ForeignKey('enrollments.id'), nullable=False)
 
     # Relationship to Enrollment
