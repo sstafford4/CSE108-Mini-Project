@@ -1,0 +1,180 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #525561;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background-color: #272a37;
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  padding: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 600px;
+  width: 600px;
+}
+
+.uc-merced-logo {
+  width: 75px;
+  height: 64px;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+input[type="text"], input[type="password"] {
+  width: 90%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  font-size: 16px;
+  background-color: #323644;
+  color: #fff;
+}
+
+input[type="text"]::placeholder, input[type="password"]::placeholder {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+  color: #999;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+  outline: none;
+  border-color: rgba(32,117,195,255);
+  box-shadow: 0px 0px 5px rgba(32,117,195,255);
+  background-color: #323644;
+  color: #fff;
+}
+
+.btn-primary {
+  background-color: rgba(85,91,105,255);
+  border: none;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  padding: 0.5rem 1.5rem;
+  margin-top: 1rem;
+  color: #fff;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: rgba(32,117,195,255);
+  cursor: pointer;
+}
+
+.btn-danger {
+  background-color: #cc0000;
+  border: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background-color: #a00000;
+  cursor: pointer;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+  cursor: pointer;
+}
+
+.btn-link {
+  color: #fff;
+  text-decoration: none;
+}
+
+.btn-link:hover {
+  color: #32c0ff;
+}
+
+.table {
+  margin: 1rem auto;
+  width: 90%;
+  color: #fff;
+  border-radius: 8px;
+}
+
+.table-dark th {
+  background-color: #525561;
+}
+
+.table-dark td {
+  background-color: #323644;
+}
+
+.table-dark tbody tr:hover {
+  background-color: #444b52;
+}
+
+.table th, .table td {
+  text-align: center;
+  padding: 1rem;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+.btn-toggle {
+  width: 48%;
+}
+
+.course-container {
+  background-color: #323644;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.text-center {
+  margin-bottom: 20px;
+}
+
+.icon-button {
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.icon-button.text-danger {
+  color: #e74c3c;
+}
+
+.icon-button.text-success {
+  color: #2ecc71;
+}
+
+.h2, h4 {
+  color: #f0f0f0;
+}
