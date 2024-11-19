@@ -1,6 +1,80 @@
+# from flask import request, jsonify, render_template, url_for, redirect, flash, session
+# from config import db, app
+# from models import User, Course, Enrollment, Student
 from flask import request, jsonify, render_template, url_for, redirect, flash, session
 from config import db, app
 from models import User, Course, Enrollment, Student
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
+
+#downgrade wtf froms, pip install wtforms==2.3.3
+
+# Initialize Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'index'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+# Secure ModelView to restrict admin access
+class SecureModelView(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.user_type == 'Admin'
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('index'))
+
+# Customized UserModelView
+class UserModelView(SecureModelView):
+    column_list = ('id', 'username', 'user_type', 'person_name')
+    column_searchable_list = ('username', 'person_name')
+    column_filters = ('user_type',)
+
+    # Use 'form_args' to specify field-level arguments properly
+    form_choices = {
+        'user_type': [
+            ('Admin', 'Admin'),
+            ('Student', 'Student'),
+            ('Teacher', 'Teacher'),
+        ]
+    }
+
+
+# Customized CourseModelView
+class CourseModelView(SecureModelView):
+    column_list = ('id', 'course_name', 'course_number', 'professor', 'capacity', 'enrolled_students')
+    column_searchable_list = ('course_name', 'course_number', 'professor')
+    column_filters = ('professor',)
+
+# Customized EnrollmentModelView
+class EnrollmentModelView(SecureModelView):
+    form_columns = ['user_id', 'course_id']  # Ensure only valid fields are used
+    inline_models = [
+        (User, dict(form_columns=['id', 'username'])),
+        (Course, dict(form_columns=['id', 'course_name']))
+    ]
+
+    def on_model_change(self, form, model, is_created):
+        if not model.user_id or not model.course_id:
+            raise ValueError("Both user_id and course_id must be set for an Enrollment.")
+
+
+# Customized StudentModelView
+class StudentModelView(SecureModelView):
+    column_list = ('id', 'student_name', 'grade', 'enrollment_id')
+    column_searchable_list = ('student_name',)
+    column_filters = ('grade',)
+    can_delete = True  # Enable deletion
+    form_columns = ['student_name', 'grade', 'enrollment_id']
+
+# Initialize Flask-Admin
+admin = Admin(app, name='Admin Panel', template_mode='bootstrap4')
+admin.add_view(UserModelView(User, db.session))
+admin.add_view(CourseModelView(Course, db.session))
+admin.add_view(SecureModelView(Enrollment, db.session))
 
 # Set a secret key for session management
 app.secret_key = 'your_secret_key_here'  # Change this to a secure random key
@@ -36,8 +110,8 @@ def login():
                 return redirect(url_for('studentview', username=username))
             elif user.user_type == "Teacher":
                 return redirect(url_for('teacherview', username=username))
-            elif user.user_type == "Admin" and user.password == 'ADMIN':
-                return redirect(url_for('adminview', username=username))
+            elif user.user_type == "Admin":
+                return redirect('/admin')
         else:
             # Invalid credentials
             flash("Invalid username or password", "error")
@@ -108,13 +182,6 @@ def teacherview(username):
     user = User.query.filter_by(username=username).first()
     return render_template('teacherview.html', person_name=user.person_name)
 
-
-@app.route('/admin/<username>')
-def adminview(username):
-    # Check if user is logged in (session)
-    if 'user_id' not in session:
-        return redirect(url_for('index'))  # Redirect to login if not logged in
-    return render_template('adminview.html')
 
 @app.route('/get_all_courses', methods=['GET'])
 def get_all_courses():
