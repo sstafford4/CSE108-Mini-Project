@@ -1,0 +1,112 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #525561; /* Dark grey-blue */
+    color: #fff;
+}
+
+/* Navbar */
+#navbar {
+    background-color: #525561; /* Light purple */
+    padding: 1rem 0;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* UC Merced Logo */
+.uc-merced-logo {
+    width: 75px;
+    height: 64px;
+}
+
+.container {
+    width: 650px;
+    min-height: 650px; /* Ensure container has a minimum height */
+    margin: auto;
+    padding: 2rem;
+    background-color: #272a37; /* Dark purple-blue */
+    color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    text-align: center; /* Center all text */
+}
+
+/* Login Heading */
+h3 {
+    font-family: 'Roboto', sans-serif; /* Professional font */
+    font-weight: 700; /* Bold */
+    color: #ffffff;
+    margin-bottom: 1rem;
+}
+
+/* Input Fields */
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    font-size: 16px;
+    background-color: #323644; /* Background color */
+    color: #fff; /* Ensure text remains white */
+}
+
+input[type="text"]::placeholder, input[type="password"]::placeholder {
+    font-family: 'Roboto', sans-serif; /* Professional font for placeholder */
+    font-weight: 600; /* Slightly bold */
+    color: #999; /* Placeholder text color */
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+    outline: none;
+    border-color: rgba(32,117,195,255); /* Blue focus border */
+    box-shadow: 0px 0px 5px rgba(32,117,195,255);
+    background-color: #323644; /* Keep background color */
+    color: #fff; /* Keep typing text white */
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: rgba(85,91,105,255);
+    border: none;
+    font-family: 'Roboto', sans-serif; /* Professional font */
+    font-weight: bold;
+    padding: 0.5rem 1.5rem;
+    margin-top: 1rem;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: rgba(32,117,195,255);
+}
+
+.btn-danger {
+    background-color: #cc0000;
+    border: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: #a00000;
+}
+
+/* Course Viewer Table */
+.table {
+    margin: 1rem auto;
+    width: 90%;
+    color: #fff;
+}
+
+.table-dark th {
+    background-color: #525561; /* Matches theme */
+}
+
+.table-dark td {
+    background-color: #323644; /* Matches input field background */
+}

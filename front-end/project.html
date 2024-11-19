@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UC Merced Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .view { display: none; }
+        .view.active { display: block; }
+        .course-container { background-color: #323644; padding: 1rem; border-radius: 8px; }
+        .btn-toggle { width: 48%; }
+        .icon-button { font-size: 1.2rem; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div id="navbar" class="d-flex justify-content-center align-items-center mb-4">
+            <img src="https://assets.foleon.com/eu-west-2/uploads-7e3kk3/16926/ucm_logo_rgb_m_3.60692d9749f2.png" 
+                 alt="UC Merced Logo" 
+                 class="uc-merced-logo">
+        </div>
+
+        <div id="main-container">
+            <div id="login-view" class="view active">
+                <h3>Login</h3>
+                <form onsubmit="handleLogin(event)">
+                    <div class="mb-3">
+                        <input 
+                            type="text" 
+                            class="form-control custom-input" 
+                            id="username" 
+                            placeholder="Username" 
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <input 
+                            type="password" 
+                            class="form-control custom-input" 
+                            id="password" 
+                            placeholder="Password" 
+                            required>
+                    </div>
+                    <button type="submit" class="btn btn-primary d-block mx-auto">Sign In</button>
+                </form>
+            </div>
+
+            <!-- Student Dashboard -->
+            <div id="student-dashboard" class="view">
+                <div class="text-center mb-3">
+                    <h2>Welcome, <span id="student-name">Student</span>!</h2>
+                    <h4>University of California, Merced</h4>
+                    <a href="#" class="btn btn-link text-white" onclick="handleLogout()">Sign out</a>
+                </div>
+
+                <div class="course-container">
+                    <div class="d-flex justify-content-between mb-3">
+                        <button class="btn btn-primary btn-toggle" id="your-courses-btn" onclick="showYourCourses()">Your Courses</button>
+                        <button class="btn btn-primary btn-toggle" id="add-courses-btn" onclick="showAddCourses()">Add Courses</button>
+                    </div>
+
+                    <div id="your-courses" class="view active">
+                        <table class="table table-dark table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Course Name</th>
+                                    <th>Teacher</th>
+                                    <th>Time</th>
+                                    <th>Students Enrolled</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="your-courses-list">
+                                <!-- Dynamic content here, initially empty -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="add-courses" class="view">
+                        <table class="table table-dark table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Course Name</th>
+                                    <th>Teacher</th>
+                                    <th>Time</th>
+                                    <th>Students Enrolled</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="add-courses-list">
+                                <!-- Dynamic content here, initially populated with available courses -->
+                                <tr>
+                                    <td>Math 101</td>
+                                    <td>Ralph Jenkins</td>
+                                    <td>MWF 10:00-10:50 AM</td>
+                                    <td>4/8</td>
+                                    <td><span class="icon-button text-success" onclick="addCourse('Math 101')">+</span></td>
+                                </tr>
+                                <tr>
+                                    <td>CS 162</td>
+                                    <td>Ammon Hepworth</td>
+                                    <td>TR 3:00-3:50 PM</td>
+                                    <td>4/4</td>
+                                    <td><span class="icon-button text-success" onclick="addCourse('CS 162')">+</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Teacher Dashboard -->
+            <div id="teacher-dashboard" class="view">
+                <div class="text-center mb-3">
+                    <h2>Welcome, <span id="teacher-name">Teacher</span>!</h2>
+                    <h4>University of California, Merced</h4>
+                    <a href="#" class="btn btn-link text-white" onclick="handleLogout()">Sign out</a>
+                </div>
+
+                <div class="course-container">
+                    <h4>Your Courses</h4>
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Time</th>
+                                <th>Students Enrolled</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CS 106</td>
+                                <td>MWF 2:00-2:50 PM</td>
+                                <td>4/10</td>
+                            </tr>
+                            <tr>
+                                <td>CS 162</td>
+                                <td>TR 3:00-3:50 PM</td>
+                                <td>4/4</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let availableCourses = [
+            { name: 'Math 101', teacher: 'Ralph Jenkins', time: 'MWF 10:00-10:50 AM', studentsEnrolled: '4/8' },
+            { name: 'CS 162', teacher: 'Ammon Hepworth', time: 'TR 3:00-3:50 PM', studentsEnrolled: '4/4' }
+        ];
+        let enrolledCourses = [
+            { name: 'Physics 121', teacher: 'Susan Walker', time: 'TR 11:00-11:50 AM', studentsEnrolled: '5/10' },
+            { name: 'CS 106', teacher: 'Ammon Hepworth', time: 'MWF 2:00-2:50 PM', studentsEnrolled: '4/10' }
+        ];
+
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === "cnorris" && password === "chris") {
+                document.getElementById('student-name').innerText = username;
+                showView('student-dashboard');
+                loadStudentCourses();
+            } else if (username === "ahepworth" && password === "ammon") {
+                document.getElementById('teacher-name').innerText = username;
+                showView('teacher-dashboard');
+            } else {
+                alert("Invalid username or password");
+            }
+        }
+
+        function handleLogout() {
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            showView('login-view');
+        }
+
+        function showYourCourses() {
+            document.getElementById('your-courses').classList.add('active');
+            document.getElementById('add-courses').classList.remove('active');
+        }
+
+        function showAddCourses() {
+            document.getElementById('add-courses').classList.add('active');
+            document.getElementById('your-courses').classList.remove('active');
+        }
+
+        function loadStudentCourses() {
+            const yourCoursesList = document.getElementById('your-courses-list');
+            yourCoursesList.innerHTML = '';
+            enrolledCourses.forEach(course => {
+                const newRow = `<tr>
+                    <td>${course.name}</td>
+                    <td>${course.teacher}</td>
+                    <td>${course.time}</td>
+                    <td>${course.studentsEnrolled}</td>
+                    <td>
+                        <span class="icon-button text-danger" onclick="removeCourse('${course.name}')">-</span>
+                    </td>
+                </tr>`;
+                yourCoursesList.insertAdjacentHTML('beforeend', newRow);
+            });
+
+            // Populate the "Add Courses" list dynamically
+            const addCoursesList = document.getElementById('add-courses-list');
+            addCoursesList.innerHTML = '';
+            availableCourses.forEach(course => {
+                const newRow = `<tr>
+                    <td>${course.name}</td>
+                    <td>${course.teacher}</td>
+                    <td>${course.time}</td>
+                    <td>${course.studentsEnrolled}</td>
+                    <td>
+                        <span class="icon-button text-success" onclick="addCourse('${course.name}')">+</span>
+                    </td>
+                </tr>`;
+                addCoursesList.insertAdjacentHTML('beforeend', newRow);
+            });
+        }
+
+        function addCourse(courseName) {
+            // Find the course in availableCourses
+            const courseIndex = availableCourses.findIndex(course => course.name === courseName);
+            if (courseIndex !== -1) {
+                const course = availableCourses[courseIndex];
+
+                // Move course to enrolledCourses
+                enrolledCourses.push(course);
+                availableCourses.splice(courseIndex, 1);
+
+                // Update the course lists
+                loadStudentCourses();
+            }
+        }
+
+        function removeCourse(courseName) {
+            // Find the course in enrolledCourses
+            const courseIndex = enrolledCourses.findIndex(course => course.name === courseName);
+            if (courseIndex !== -1) {
+                const course = enrolledCourses[courseIndex];
+
+                // Move course back to availableCourses
+                availableCourses.push(course);
+                enrolledCourses.splice(courseIndex, 1);
+
+                // Update the course lists
+                loadStudentCourses();
+            }
+        }
+
+        // Initialize the student courses on page load
+        window.onload = () => {
+            if (document.getElementById('student-dashboard').classList.contains('active')) {
+                loadStudentCourses();
+            }
+        };
+    </script>
