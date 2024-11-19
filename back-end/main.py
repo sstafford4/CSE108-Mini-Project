@@ -1,6 +1,6 @@
 from flask import request, jsonify, render_template, url_for, redirect, flash, session
 from config import db, app
-from models import User, Course, Enrollment
+from models import User, Course, Enrollment, Student
 
 # Set a secret key for session management
 app.secret_key = 'your_secret_key_here'  # Change this to a secure random key
@@ -97,12 +97,17 @@ def studentview(username):
     user = User.query.filter_by(username=username).first()
     return render_template('studentview.html', person_name=user.person_name)
 
+
 @app.route('/teacher/<username>')
 def teacherview(username):
     # Check if user is logged in (session)
     if 'user_id' not in session:
         return redirect(url_for('index'))  # Redirect to login if not logged in
-    return render_template('teacherview.html')
+
+    # Applied user and person_name, just for showing name on teacherview.html
+    user = User.query.filter_by(username=username).first()
+    return render_template('teacherview.html', person_name=user.person_name)
+
 
 @app.route('/admin/<username>')
 def adminview(username):
@@ -130,20 +135,36 @@ def register_for_course(course_id):
     if 'user_id' not in session:
         return redirect(url_for('index'))  # Redirect to login if no user session
 
+    # Get course details
     course = Course.query.get(course_id)
     if course and course.has_capacity():
         # Increment the enrolled students for the course
         course.enrolled_students += 1
         db.session.commit()
 
-        # You can also create a new enrollment record here if necessary
+        # Create a new enrollment record
         enrollment = Enrollment(user_id=session['user_id'], course_id=course_id)
         db.session.add(enrollment)
+        db.session.commit()
+
+        # Get the student name from User model
+        user = User.query.get(session['user_id'])
+        if user:
+            person_name = user.person_name
+        else:
+            return jsonify({"message": "User not found"}), 400
+
+        # Create a new Student record
+        student = Student(student_name=person_name, grade=100, enrollment_id=enrollment.id)
+        db.session.add(student)
         db.session.commit()
 
         return jsonify({"message": "Successfully registered for the course"})
     else:
         return jsonify({"message": "Course is full or not found"}), 400
+
+
+
 
 @app.route('/drop_course/<int:course_id>', methods=['POST'])
 def drop_course(course_id):
@@ -161,13 +182,21 @@ def drop_course(course_id):
             course.enrolled_students -= 1
             db.session.commit()
 
-        # Remove the enrollment
+        # Remove the Student record
+        student = Student.query.filter_by(enrollment_id=enrollment.id).first()
+        if student:
+            db.session.delete(student)
+            db.session.commit()
+
+        # Remove the enrollment record
         db.session.delete(enrollment)
         db.session.commit()
 
         return jsonify({"message": "Successfully dropped the course"})
     else:
         return jsonify({"message": "You are not enrolled in this course"}), 400
+
+
 
 
 @app.route('/student_courses', methods=['GET'])
@@ -195,6 +224,65 @@ def logout():
     # Clear session data (log out the user)
     session.clear()  # Clear all session data
     return redirect(url_for('index')), flash("You have been logged out.", "info")  # Redirect to login page
+
+#me
+@app.route( '/teacher/courses', methods=['GET'])
+def get_teacher_courses():
+    if 'user_id' not in session:
+        return redirect(url_for('login')) # Redirect to login if no user session
+
+    user_id = session['user_id']
+
+    # Query the User model to get the person_name (teacher's name) by user_id
+    user = User.query.filter_by(id=user_id).first()
+
+    if not user:
+        return redirect(url_for('login')) # If no user found, redirect to login
+
+    person_name = user.person_name
+    username = user.username
+
+    # Query the courses taught by the teacher (professor)
+    courses = Course. query. filter_by(professor=person_name).all()
+
+    return render_template('teacher_courses.html', person_name=person_name, courses=courses, username=username)
+
+@app.route('/course/<int:course_id>', methods=['GET'])
+def view_course(course_id):
+    # Query the course by its ID
+    course = Course.query.get(course_id)
+    if not course:
+        return "Course not found", 404
+
+    # Query students and grades for the course
+    enrollments = Enrollment.query.filter_by(course_id=course_id).join(Student).with_entities(
+        Student.id, #Add the student ID
+        Student.student_name,
+        Student.grade
+    ).all()
+
+    return render_template('view_course.html', course=course, students=enrollments)
+
+
+@app.route('/update_grade/<int:student_id>', methods=['POST'])
+def update_grade(student_id):
+    if 'user_id' not in session:
+        return redirect(url_for('index'))  # Redirect to login if no user session
+
+    # Get the new grade from the form
+    new_grade = request.form.get('new_grade')
+
+    # Query the student record by student_id
+    student = Student.query.get(student_id)
+    if student:
+        # Update the student's grade
+        student.grade = new_grade
+        db.session.commit()
+
+        return redirect(url_for('view_course', course_id=student.enrollment.course_id))
+    else:
+        return jsonify({"message": "Student not found"}), 404
+
 
 if __name__ == '__main__':
     with app.app_context():
