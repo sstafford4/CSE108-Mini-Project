@@ -82,7 +82,6 @@ def login():
             "status": "error",
             "message": "Invalid username or password"
         }), 401
-
     # if request.method == 'POST':
     #     username = request.form.get('username')
     #     password = request.form.get('password')
