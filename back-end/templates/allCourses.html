@@ -66,15 +66,8 @@
                 <td>{{ course.capacity }}</td>
                 <td>{{ course.enrolled_students }}</td>
                 <td>{{ 'Yes' if course.enrolled_students < course.capacity else 'No' }}</td>
-<!--                <td>-->
-<!--                    {% if course.enrolled_students < course.capacity %}-->
-<!--                        <button onclick="studentRegister({{ course.id | tojson }})">Register</button>-->
-<!--                    {% else %}-->
-<!--                        Cannot Register-->
-<!--                    {% endif %}-->
-<!--                </td>-->
                 <td>
-                    {% if course.id in enrolled_course_ids %}
+                    {% if course.id in enrolled_course_ids%}
                         Already Registered
                     {% elif course.enrolled_students < course.capacity %}
                         <button onclick="studentRegister({{ course.id | tojson }})">Register</button>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Details</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <link rel="stylesheet" href="/static/styles.css"> <!-- Link to your CSS file -->
+</head>
+<body>
+    <h1>Course Details</h1>
+
+    <!-- Course Information -->
+    <div>
+        <h2>Course Name: {{ course.course_name }}</h2>
+        <p>Course ID: {{ course.course_number }}</p>
+    </div>
+
+    <!-- Enrolled Students -->
+    <h3>Enrolled Students</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Grade</th>
+                <th>Update Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student[0] }}</td>
+                <td>{{ student[1] }}</td>
+                <td>{{ student[2] }}</td>
+                <td>
+                    <!-- Update Grade Form -->
+                    <form action="/update_grade/{{ student[0] }}" method="POST">
+                        <input type="text" name="new_grade" placeholder="Enter new grade" required>
+                        <button type="submit">Update</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="javascript:history.back()" class="return">Back to Home</a> <!-- Link to go back to home -->
+</body>
+</html>

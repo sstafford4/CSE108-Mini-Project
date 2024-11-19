@@ -130,6 +130,20 @@ def get_all_courses():
     all_courses_list = Course.query.all()
     return render_template('allCourses.html', courses=all_courses_list, enrolled_course_ids=enrolled_course_ids)
 
+@app.route('/teacher_all_courses', methods=['GET'])
+def teacher_all_courses():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    user_id = session['user_id']
+
+    enrolled_course_ids = {
+        enrollment.course_id for enrollment in Enrollment.query.filter_by(user_id=user_id).all()
+    }
+
+    all_courses_list = Course.query.all()
+    return render_template('teacherAllCourses.html', courses=all_courses_list, enrolled_course_ids=enrolled_course_ids)
+
 @app.route('/register_for_course/<int:course_id>', methods=['GET', 'POST'])
 def register_for_course(course_id):
     if 'user_id' not in session:
@@ -255,11 +269,21 @@ def view_course(course_id):
         return "Course not found", 404
 
     # Query students and grades for the course
-    enrollments = Enrollment.query.filter_by(course_id=course_id).join(Student).with_entities(
-        Student.id, #Add the student ID
-        Student.student_name,
-        Student.grade
-    ).all()
+    # enrollments = Enrollment.query.filter_by(course_id=course_id).join(Student).with_entities(
+    #     Student.id, #Add the student ID
+    #     Student.student_name,
+    #     Student.grade
+    # ).all()
+    enrollments = (
+        Enrollment.query.filter_by(course_id=course_id)
+        .join(Student, Enrollment.id == Student.enrollment_id)
+        .with_entities(
+            Student.id,  # Fetch the student ID
+            Student.student_name,  # Fetch the student name
+            Student.grade  # Fetch the student grade
+        )
+        .all()
+    )
 
     return render_template('view_course.html', course=course, students=enrollments)
 
