@@ -125,6 +125,20 @@ def get_all_courses():
     all_courses_list = Course.query.all()
     return render_template('allCourses.html', courses=all_courses_list, enrolled_course_ids=enrolled_course_ids)
 
+@app.route('/teacher_all_courses', methods=['GET'])
+def teacher_all_courses():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+
+    user_id = session['user_id']
+
+    enrolled_course_ids = {
+        enrollment.course_id for enrollment in Enrollment.query.filter_by(user_id=user_id).all()
+    }
+
+    all_courses_list = Course.query.all()
+    return render_template('teacherAllCourses.html', courses=all_courses_list, enrolled_course_ids=enrolled_course_ids)
+
 @app.route('/register_for_course/<int:course_id>', methods=['GET', 'POST'])
 def register_for_course(course_id):
     if 'user_id' not in session:
@@ -186,6 +200,7 @@ def student_courses():
         Course.course_number,
         Course.professor,
         Course.enrolled_students,
+        Course.capacity
     ).all()
 
     return render_template('student_courses.html', courses=registered_courses)
@@ -195,6 +210,29 @@ def logout():
     # Clear session data (log out the user)
     session.clear()  # Clear all session data
     return redirect(url_for('index')), flash("You have been logged out.", "info")  # Redirect to login page
+
+
+@app.route('/teacher/courses', methods=['GET'])
+def get_teacher_courses():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))  # Redirect to login if no user session
+
+    # Get the user_id from the session (the logged-in user's ID)
+    user_id = session['user_id']
+
+    # Query the User model to get the person_name (teacher's name) by user_id
+    user = User.query.filter_by(id=user_id).first()
+
+    if not user:
+        return redirect(url_for('login'))  # If no user found, redirect to login
+
+    person_name = user.person_name  # Assuming 'person_name' is the field for the teacher's name
+
+    # Query the courses taught by the teacher (professor)
+    courses = Course.query.filter_by(professor=person_name).all()
+
+    # Render the courses in the HTML template
+    return render_template('teacher_courses.html', person_name=person_name, courses=courses)
 
 if __name__ == '__main__':
     with app.app_context():

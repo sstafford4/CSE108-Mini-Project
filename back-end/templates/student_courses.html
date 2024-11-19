@@ -57,6 +57,7 @@
                 <th>Course Number</th>
                 <th>Professor</th>
                 <th>Enrolled Students</th>
+                <th>Capacity</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -67,6 +68,7 @@
                 <td>{{ course.course_number }}</td>
                 <td>{{ course.professor }}</td>
                 <td>{{ course.enrolled_students }}</td>
+                <td>{{ course.capacity }}</td>
                 <td>
                     <button onclick="dropCourse({{ course.id }})">Drop Course</button>
                 </td>

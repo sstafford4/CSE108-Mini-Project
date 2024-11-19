@@ -8,5 +8,11 @@
             <!-- Use the URL for the index route -->
             <a href="{{ url_for('index') }}" class="back-to-login">Log Out</a>
         </div>
+        <div>
+            <a href="{{ url_for('teacher_all_courses') }}" class="all-courses">View All Courses</a>
+        </div>
+        <div>
+            <a href="{{ url_for('get_teacher_courses', person_name=person_name) }}" class="teacher-courses">Courses You Teach</a>
+        </div>
     </body>
 </html>
