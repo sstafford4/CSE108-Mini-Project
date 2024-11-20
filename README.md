@@ -1,0 +1,1 @@
+final branch has full feature complete lab assignment. Current Issue: Flask-Admin does not work as intended, so the admin portion remains incomplete, however, student/teacher functions work perfectly. 
